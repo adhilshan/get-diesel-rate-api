@@ -6,7 +6,6 @@ import json
 
 app = Flask(__name__)
 
-data_array = []
 
 places = [
   "Agra", "Ahmedabad", "Allahabad", "Aurangabad", "Bangalore", "Bhopal", "Bhubaneswar", "Chandigarh", "Chennai", "Coimbatore", "Dehradun", "Erode", "Faridabad", "Ghaziabad", "Gurgaon", "Guwahati", "Hyderabad", "Indore", "Jaipur", "Jammu", "Jamshedpur", "Kanpur Urban", "Kolhapur", "Kolkata", "Kozhikode", "Lucknow", "Ludhiana", "Madurai", "Mangalore", "Mumbai", "Mysore", "Nagpur", "Nashik", "New Delhi", "Noida", "Patna", "Pune", "Raipur", "Rajkot", "Ranchi", "Salem", "Shimla", "Srinagar", "Surat", "Thane", "Tiruchchirappalli", "Trivandrum", "Vadodara", "Varanasi", "Visakhapatnam"
@@ -14,10 +13,10 @@ places = [
 
 @app.route('/api/diesel-rate')
 def home():
-    getPrice()
-    return data_array[len(data_array) - 1]
+    return getPrice()
 
 def getPrice():
+    data_array = []
     data_array_2 = []
     for place in places:
         JSON_OBJ_1 = {}
@@ -49,3 +48,4 @@ def getPrice():
     JSON_OBJ_1['data'] = data_array_2
     JSON_OBJ_1['meassure'] = 'INR/litre'
     data_array.append(JSON_OBJ_1)
+    return data_array
