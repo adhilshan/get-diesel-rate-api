@@ -22,14 +22,11 @@ def getPrice():
     for place in places:
         JSON_OBJ_2 = {}
         url = f'https://www.financialexpress.com/diesel-rate-in-{place}/#main-heading'
-
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.138 Safari/537.36'
         }
-
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-
         soup = BeautifulSoup(response.content, 'html.parser')
         titles = soup.find_all('span', class_='active summary_')
         for title in titles:
@@ -40,7 +37,6 @@ def getPrice():
                 JSON_OBJ_2['amount'] = amount
             else:
                 data_array_2.append(JSON_OBJ_2)
-
     JSON_OBJ_1 = {
         'data': data_array_2,
         'measure': 'INR/litre'
