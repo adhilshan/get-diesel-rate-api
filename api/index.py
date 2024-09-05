@@ -11,7 +11,7 @@ app = Flask(__name__)
 data_array = []
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-with open(os.path.join(current_dir, 'api/database.json'), 'r') as file:
+with open(os.path.join(current_dir, 'database.json'), 'r') as file:
     data_array = json.load(file)
 
 places = [
@@ -81,5 +81,5 @@ def getPrice():
     JSON_OBJ_1['data'] = data_array_2
     JSON_OBJ_1['meassure'] = 'INR/litre'
     data_array.append(JSON_OBJ_1)
-    with open(os.path.join(current_dir, 'api/database.json'), 'w') as file:
+    with open(os.path.join(current_dir, 'database.json'), 'w') as file:
         json.dump(data_array, file, indent=4)
