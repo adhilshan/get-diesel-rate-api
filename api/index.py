@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 
 logging.basicConfig(level=logging.INFO)
 
+app = Flask(__name__)
+
 @app.route('/api/diesel-rate')
 def home():
     try:
