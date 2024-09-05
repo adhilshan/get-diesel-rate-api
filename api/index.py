@@ -5,12 +5,12 @@ from bs4 import BeautifulSoup
 app = Flask(__name__)
 
 places = [
-    "Agra", "Ahmedabad", "Allahabad", "Aurangabad", "Bangalore", "Bhopal", "Bhubaneswar", "Chandigarh", 
-    "Chennai", "Coimbatore", "Dehradun", "Erode", "Faridabad", "Ghaziabad", "Gurgaon", "Guwahati", 
-    "Hyderabad", "Indore", "Jaipur", "Jammu", "Jamshedpur", "Kanpur Urban", "Kolhapur", "Kolkata", 
-    "Kozhikode", "Lucknow", "Ludhiana", "Madurai", "Mangalore", "Mumbai", "Mysore", "Nagpur", "Nashik", 
-    "New Delhi", "Noida", "Patna", "Pune", "Raipur", "Rajkot", "Ranchi", "Salem", "Shimla", "Srinagar", 
-    "Surat", "Thane", "Tiruchchirappalli", "Trivandrum", "Vadodara", "Varanasi", "Visakhapatnam"
+    "Ahmedabad", "Bangalore", "Bhopal",  "Chandigarh", 
+    "Chennai", "Coimbatore" , "Faridabad",
+    "Hyderabad", "Indore", "Jaipur", "Jamshedpur", "Kolkata", 
+    "Kozhikode", "Lucknow", "Madurai", "Mangalore", "Mumbai", "Nagpur", "Nashik",
+    "New Delhi", "Noida", "Pune", "Raipur", "Ranchi", "Salem", "Srinagar", 
+    "Surat", "Trivandrum", "Varanasi", "Visakhapatnam"
 ]
 
 @app.route('/api/diesel-rate')
