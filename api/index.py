@@ -49,7 +49,7 @@ def home():
         return {"error": f"Failed to retrieve the webpage. Status code: {response.status_code}"}
 
 
-@app.route('/api/petrol-price/recent')
+@app.route('/api/diesel-price/recent')
 def getStateWise():
     state = request.args.get('state')
 
