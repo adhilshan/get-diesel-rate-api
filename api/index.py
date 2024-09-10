@@ -5,46 +5,95 @@ import time
 
 app = Flask(__name__)
 
-JSON_OBJ_1 = {}
-places = [
-    "Ahmedabad", "Bangalore", "Bhopal", "Chandigarh", 
-    "Chennai", "Hyderabad", "Jaipur", "Jamshedpur", "Kolkata", 
-    "Kozhikode", "Lucknow", "Madurai", "Mumbai", "Nashik",
-    "New Delhi", "Pune", "Raipur", "Ranchi", "Salem", "Srinagar", 
-    "Trivandrum", "Varanasi", "Visakhapatnam"]
-
-@app.route('/api/diesel-rate')
+@app.route('/api/diesel-price/all')
 def home():
-    getPrice()
-    return JSON_OBJ_1
+    url = 'https://www.ndtv.com/fuel-prices/diesel-price-in-all-state'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.138 Safari/537.36'
+    }
 
-def getPrice():
-    data_array = []
-    for place in places:
-        JSON_OBJ_2 = {}
-        url = 'https://www.financialexpress.com/diesel-rate-in-'+ place +'/#main-heading'
-
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.138 Safari/537.36'
-        }
-
-        response = requests.get(url, headers=headers)
-
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            titles = soup.find_all('span', class_='active summary_')
-            for title in titles:
-                index = title.get_text().find("₹")
-                if index != -1:
-                    amount = title.get_text()[index+1:].split()[0]
-                    JSON_OBJ_2['place'] = place
-                    JSON_OBJ_2['amount'] = amount
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Find all rows in the table
+        rows = soup.find_all('tr')
+        
+        data = []
+        
+        for row in rows[1:]:  # Skip the first row as it contains headers
+            cells = row.find_all('td')
+            
+            if len(cells) == 3:
+                state = cells[0].get_text(strip=True)
+                price = cells[1].get_text(strip=True)
+                change = cells[2].get_text(strip=True)
+                
+                if 'lr' in cells[2].span['class']:
+                    change_status = "No Change"
+                elif 'down' in cells[2].span['class']:
+                    change_status = "Increase"
                 else:
-                    print("₹ symbol not found in the text.")
-            data_array.append(JSON_OBJ_2)
-        else:
-            print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
+                    change_status = "Decrease"
+                
+                # Append the scraped data to the list
+                data.append({
+                    'state': state,
+                    'price': price,
+                    'change': change,
+                    'change_status': change_status
+                })
+        
+        return {"data": data}
+    else:
+        return {"error": f"Failed to retrieve the webpage. Status code: {response.status_code}"}
 
-    JSON_OBJ_1['timestamp'] = time.time()
-    JSON_OBJ_1['data'] = data_array
-    JSON_OBJ_1['meassure'] = 'INR/litre'
+
+@app.route('/api/petrol-price/recent')
+def getStateWise():
+    state = request.args.get('state')
+
+    url = f'https://www.ndtv.com/fuel-prices/diesel-price-in-{state}-state'
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.138 Safari/537.36'
+    }
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        rows = soup.find_all('tr')
+        
+        data = []
+        
+        for row in rows[1:11]:
+            cells = row.find_all('td')
+            
+            if len(cells) == 3:
+                date = cells[0].get_text(strip=True)
+                price = cells[1].get_text(strip=True)
+                change = cells[2].get_text(strip=True)
+                
+                # Error handling for span and class attributes
+                if cells[2].span and 'class' in cells[2].span.attrs:
+                    if 'lr' in cells[2].span['class']:
+                        change_status = "No Change"
+                    elif 'down' in cells[2].span['class']:
+                        change_status = "Increase"
+                    else:
+                        change_status = "Decrease"
+                else:
+                    change_status = "Unknown"
+                
+                # Append the scraped data to the list
+                data.append({
+                    'date': date,
+                    'price': price,
+                    'change': change,
+                    'change_status': change_status
+                })
+        
+        return {"data": data}
+    else:
+        return {"error": f"Failed to retrieve the webpage. Status code: {response.status_code}"}
