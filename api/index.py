@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import requests
 from bs4 import BeautifulSoup
 
