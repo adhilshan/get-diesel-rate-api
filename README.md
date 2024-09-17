@@ -22,8 +22,8 @@ Before you begin, ensure you have met the following requirements:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/diesel-price-scraper.git
-   cd diesel-price-scraper
+   git clone https://github.com/adhilshan/get-diesel-rate-api.git
+   cd get-diesel-rate-api
    ```
 
 2. **Install the required dependencies:**
