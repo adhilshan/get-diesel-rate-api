@@ -1,9 +1,5 @@
 # Documentation
 
-Here's a sample `README.md` file for your Flask web scraping project to document its functionality and usage on GitHub:
-
-# Diesel Price Scraper API
-
 This project is a Flask-based web scraper that retrieves diesel prices from the NDTV website for various states and cities in India. It exposes a set of API endpoints that fetch diesel price data, change status, and other relevant details.
 
 ## Features
