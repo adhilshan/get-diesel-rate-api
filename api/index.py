@@ -7,8 +7,10 @@ import requests
 from bs4 import BeautifulSoup
 import time
 from datetime import datetime, timedelta
+from flask_cors import CORS
 
 load_dotenv()
+CORS(app)
 
 firebase_admin_sdk_key = {
     "type": os.getenv('FIREBASE_ADMIN_SDK_KEY_TYPE'),
