@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 from flask_cors import CORS
 
 load_dotenv()
-CORS(app)
 
 firebase_admin_sdk_key = {
     "type": os.getenv('FIREBASE_ADMIN_SDK_KEY_TYPE'),
@@ -81,6 +80,7 @@ def scrape_data(url):
         raise Exception(f"Failed to retrieve the webpage. Status code: {response.status_code}")
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():
