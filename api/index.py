@@ -143,5 +143,36 @@ def get_state_wise():
         push_or_update_data(firebase_ref, new_data)
         return {"data": new_data['data']}
 
+@app.route('/api/diesel-price/bycity/recent')
+def get_city_wise():
+    city = request.args.get('city')
+    city_url_friendly = city.replace(" ", "-").lower()
+    url = f'https://www.ndtv.com/fuel-prices/diesel-price-in-{city_url_friendly}-city'
+    firebase_ref = f'diesel_prices/cities/{city}'
+
+    firebase_data = retrieve_data(firebase_ref)
+    if firebase_data:
+        if is_data_stale(firebase_data['timestamp']):
+            print("City data is older than 14 hours, refreshing from the web...")
+            data = scrape_data(url)
+            new_data = {
+                'data': data,
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            push_or_update_data(firebase_ref, new_data)
+            return {"data": new_data['data']}
+        else:
+            print("Serving city data from Firebase...")
+            return {"data": firebase_data['data']}
+    else:
+        data = scrape_data(url)
+        new_data = {
+            'data': data,
+            'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        push_or_update_data(firebase_ref, new_data)
+        return {"data": new_data['data']}
+
+
 if __name__ == '__main__':
     app.run(debug=True)
