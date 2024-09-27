@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from flask import Flask, request, render_template
 import requests
 from bs4 import BeautifulSoup
-import time
 from datetime import datetime, timedelta
 from flask_cors import CORS
 
@@ -48,7 +47,7 @@ def is_data_stale(timestamp):
     data_time = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
     return datetime.now() - data_time > timedelta(hours=14)
 
-def scrape_data(url):
+def scrape_data(url, limit=None):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.5615.138 Safari/537.36'
     }
@@ -57,7 +56,8 @@ def scrape_data(url):
         soup = BeautifulSoup(response.content, 'html.parser')
         rows = soup.find_all('tr')
         data = []
-        for row in rows[1:]:
+        max_rows = limit if limit is not None else len(rows) - 1
+        for row in rows[1:max_rows + 1]:
             cells = row.find_all('td')
             if len(cells) == 3:
                 state = cells[0].get_text(strip=True)
@@ -154,7 +154,7 @@ def get_city_wise():
     if firebase_data:
         if is_data_stale(firebase_data['timestamp']):
             print("City data is older than 14 hours, refreshing from the web...")
-            data = scrape_data(url)
+            data = scrape_data(url, limit=10)
             new_data = {
                 'data': data,
                 'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -165,14 +165,13 @@ def get_city_wise():
             print("Serving city data from Firebase...")
             return {"data": firebase_data['data']}
     else:
-        data = scrape_data(url)
+        data = scrape_data(url, limit=10)
         new_data = {
             'data': data,
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         push_or_update_data(firebase_ref, new_data)
         return {"data": new_data['data']}
-
 
 if __name__ == '__main__':
     app.run(debug=True)
